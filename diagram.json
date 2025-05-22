@@ -1,15 +1,15 @@
 [
   {
-    "type": "ellipse",
+    "type": "triangle",
     "x": 50.0,
     "y": 50.0,
-    "width": 190.0,
-    "height": 110.0,
-    "rotation": 15.0,
-    "fill_color": "#00aa7f",
-    "border_color": "#aaff00",
+    "width": 120.0,
+    "height": 120.0,
+    "rotation": 60.0,
+    "fill_color": "#55ffff",
+    "border_color": "#ff5500",
     "border_width": 7.0,
-    "pos_x": 90.0,
-    "pos_y": 10.0
+    "pos_x": 130.0,
+    "pos_y": 40.0
   }
 ]

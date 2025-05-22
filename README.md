@@ -30,3 +30,9 @@ Features:
 Same features as the Rectangle Editor
 
 ![Screenshot](Images/EllipseEditor.png)
+
+## Triangle Editor
+
+Same features as the Rectangle Editor
+
+![Screenshot](Images/TriangleEditor.png)
