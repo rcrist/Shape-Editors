@@ -24,3 +24,9 @@ Features:
     - Border Width
 
 ![Screenshot](Images/RectangleEditor.png)
+
+## Ellipse Editor
+
+Same features as the Rectangle Editor
+
+![Screenshot](Images/EllipseEditor.png)
