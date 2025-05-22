@@ -26,15 +26,16 @@ def snap_to_grid(point, grid_size=20):
     """
     Snaps a point to the nearest grid line based on the specified grid size.
     """
-    if not IS_GRID_ENABLED:
-        return
-    # If point is QPointF or QPoint
+    # Always return a QPointF for QPointF input
     if hasattr(point, 'x') and hasattr(point, 'y'):
+        if not IS_GRID_ENABLED:
+            return point
         x = round(point.x() / grid_size) * grid_size
         y = round(point.y() / grid_size) * grid_size
         return QPointF(x, y)
-    # If point is a number (int or float)
     elif isinstance(point, (int, float)):
+        if not IS_GRID_ENABLED:
+            return point
         return round(point / grid_size) * grid_size
     else:
         raise TypeError("snap_to_grid expects QPointF, QPoint, int, or float")

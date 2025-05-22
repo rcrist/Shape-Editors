@@ -3,7 +3,9 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from GUI.MenuBar import MenuBar
 from GUI.RightDock import RightDock
+from GUI.Grid import *
 from Shapes.Rectangle import Rectangle
+from GUI.GridView import GridView
 import sys
 
 class MainWindow(QMainWindow):
@@ -20,11 +22,12 @@ class MainWindow(QMainWindow):
         self.scene.setSceneRect(0, 0, 1000, 500)
 
         # Create a QGraphicsView for the scene and set it as the central widget
-        self.view = QGraphicsView(self.scene)
+        self.view = GridView(self)
+        self.view.setScene(self.scene)
         self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setCentralWidget(self.view)
 
-        # Draw a rectangle on the scene
+        # Draw the shape on the scene
         self.shape = Rectangle(50, 50, 100, 100)
         self.scene.addItem(self.shape)
 

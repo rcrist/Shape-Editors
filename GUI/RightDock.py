@@ -21,7 +21,7 @@ class RightDock(QDockWidget):
         self.form_layout.addRow(QLabel("Height"), self.height_slider)
         self.form_layout.addRow(QLabel("Rotation"), self.rotation_slider)
 
-        # --- New controls for color and border ---
+        # --- Controls for color and border ---
         self.fill_color_btn = QPushButton("Fill Color")
         self.border_color_btn = QPushButton("Border Color")
         self.border_width_spin = QSpinBox()
