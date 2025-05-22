@@ -6,11 +6,13 @@ from GUI.Grid import *
 from Shapes.Rectangle import Rectangle
 import json
 
-IS_DARK_MODE = True
+is_dark_mode = True
+rotation_snap_angle = 15
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.is_grid_enabled = True
 
         # File Menu
         file_menu = self.addMenu("File")
@@ -32,67 +34,86 @@ class MenuBar(QMenuBar):
         toggle_grid_action.triggered.connect(self.toggle_grid)
         toggle_theme_action = settings_menu.addAction("Toggle Theme")
         toggle_theme_action.triggered.connect(self.toggle_theme)
+        set_rotation_snap_action = settings_menu.addAction("Set Rotation Snap")
+        set_rotation_snap_action.triggered.connect(self.set_rotation_snap)
 
     def toggle_theme(self):
-        IS_DARK_MODE = not IS_DARK_MODE
+        global is_dark_mode
+        is_dark_mode = not is_dark_mode
 
-        main_window = self.parent()
-        if hasattr(main_window, "view"):
-            if IS_DARK_MODE:
-                main_window.view.setBackgroundBrush(QBrush(Qt.GlobalColor.black))
-            else:
-                main_window.view.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
-
-        # Simple dark/light mode toggle using QApplication palette
-        app = QApplication.instance()
-        palette = app.palette()
-        if not IS_DARK_MODE:
-            # Switch to light mode
-            app.setPalette(QApplication.style().standardPalette())
-            # Set menubar and menu drop downs to light mode
-            self.setStyleSheet("""
-                QMenuBar, QMenu, QMenuBar::item, QMenu::item {
-                    background: #f0f0f0;
-                    color: #000;
-                }
-                QMenuBar::item:selected, QMenu::item:selected {
-                    background: #d0d0d0;
-                }
-            """)
+        if is_dark_mode:
+            self.apply_dark_theme()
         else:
-            # Switch to dark mode
-            dark_palette = QPalette()
-            dark_palette.setColor(QPalette.ColorRole.Window, QColor(0, 0, 0))
-            dark_palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
-            dark_palette.setColor(QPalette.ColorRole.Base, QColor(0, 0, 0))
-            dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(0, 0, 0))
-            dark_palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
-            dark_palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.white)
-            dark_palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white)
-            dark_palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
-            dark_palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white)
-            dark_palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
-            dark_palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
-            dark_palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
-            app.setPalette(dark_palette)
-            # Set menubar and menu drop downs to dark mode
-            self.setStyleSheet("""
-                QMenuBar, QMenu, QMenuBar::item, QMenu::item {
-                    background: #000000;
-                    color: #fff;
-                }
-                QMenuBar::item:selected, QMenu::item:selected {
-                    background: #2a82da;
-                }
-            """)
+            self.apply_light_theme()
+
+    def apply_dark_theme(self):
+        app = QApplication.instance()
+        dark_palette = QPalette()
+        dark_palette.setColor(QPalette.ColorRole.Window, QColor(0, 0, 0))
+        dark_palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Base, QColor(0, 0, 0))
+        dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(0, 0, 0))
+        dark_palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
+        dark_palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
+        dark_palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
+        app.setPalette(dark_palette)
+        self.setStyleSheet("""
+            QMenuBar, QMenu, QMenuBar::item, QMenu::item {
+                background: #000000;
+                color: #fff;
+            }
+            QMenuBar::item:selected, QMenu::item:selected {
+                background: #2a82da;
+            }
+        """)
+
+    def apply_light_theme(self):
+        app = QApplication.instance()
+        app.setPalette(QApplication.style().standardPalette())
+        self.setStyleSheet("""
+            QMenuBar, QMenu, QMenuBar::item, QMenu::item {
+                background: #f0f0f0;
+                color: #000;
+            }
+            QMenuBar::item:selected, QMenu::item:selected {
+                background: #d0d0d0;
+            }
+        """)
 
     def toggle_grid(self):
-        # Toggle grid visibility in the scene if it supports it
-        main_window = self.parent()
-        if hasattr(main_window, "view") and hasattr(main_window.view, "toggle_grid"):
-            main_window.view.toggle_grid()
+        import GUI.Grid
+        global rotation_snap_angle
+
+        GUI.Grid.IS_GRID_ENABLED = not GUI.Grid.IS_GRID_ENABLED
+
+        # Set rotation snap to 1 if grid is off, restore to default if grid is on
+        if not GUI.Grid.IS_GRID_ENABLED:
+            rotation_snap_angle = 1
         else:
-            QMessageBox.information(self, "Toggle Grid", "Grid toggling is not implemented in the view.")
+            rotation_snap_angle = 15  # or keep a backup of the previous value if you want to restore user setting
+
+        # Optionally, update the view to refresh the grid
+        main_window = self.parent()
+        if hasattr(main_window, "view"):
+            main_window.view.viewport().update()
+
+    def set_rotation_snap(self):
+        global rotation_snap_angle
+        angle, ok = QInputDialog.getInt(
+            self,
+            "Set Rotation Snap",
+            "Enter rotation snap angle (degrees):",
+            value=rotation_snap_angle,
+            min=1,
+            max=360
+        )
+        if ok:
+            rotation_snap_angle = angle
 
     def new_file(self):
         main_window = self.parent()

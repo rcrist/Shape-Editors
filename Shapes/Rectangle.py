@@ -9,15 +9,17 @@ class Rectangle(QGraphicsRectItem, BaseShapeItem):
         super().__init__(x, y, w, h)
 
         self.setBrush(QBrush(Qt.GlobalColor.blue))
-        self.setPen(QPen(Qt.GlobalColor.white, 3))
+        self.setPen(QPen(Qt.GlobalColor.black, 3))
         self.setFlags(
             QGraphicsItem.GraphicsItemFlag.ItemIsMovable |
             QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
             QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges
         )
 
-def itemChange(self, change, value):
-    if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-        print("itemChange called with:", value)
-        return snap_to_grid(value, GRID_SIZE)
-    return super().itemChange(change, value)
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
+            # Force the view to update to prevent artifacts
+            for view in self.scene().views():
+                view.viewport().update()
+            return snap_to_grid(value, GRID_SIZE)
+        return super().itemChange(change, value)

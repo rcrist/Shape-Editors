@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-from GUI.MenuBar import MenuBar
+from GUI.MenuBar import *
 from GUI.RightDock import RightDock
 from GUI.Grid import *
 from Shapes.Rectangle import Rectangle
@@ -14,8 +14,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Rectangle Editor")
         self.setGeometry(200, 100, 1200, 600)
 
-        # Add MenuBar
-        self.setMenuBar(MenuBar(self))
+         # Add MenuBar
+        menu_bar = MenuBar(self)
+        self.setMenuBar(menu_bar)
+        menu_bar.apply_dark_theme()
 
         # Create a QGraphicsScene
         self.scene = QGraphicsScene(self)
@@ -24,7 +26,6 @@ class MainWindow(QMainWindow):
         # Create a QGraphicsView for the scene and set it as the central widget
         self.view = GridView(self)
         self.view.setScene(self.scene)
-        self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setCentralWidget(self.view)
 
         # Draw the shape on the scene

@@ -3,13 +3,14 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 GRID_SIZE = 10
-GRID_COLOR = QColor("#333333")
+GRID_COLOR = QColor("#cccccc")
 IS_GRID_ENABLED = True
 
 def draw_grid_background(scene, painter, rect, grid_size=GRID_SIZE, grid_color=GRID_COLOR):
     """
     Draws a grid background on the given QGraphicsScene using the provided painter and rect.
     """
+    painter.fillRect(rect, Qt.GlobalColor.white)
     if not IS_GRID_ENABLED:
         return
     left = int(rect.left()) - (int(rect.left()) % grid_size)
@@ -22,7 +23,7 @@ def draw_grid_background(scene, painter, rect, grid_size=GRID_SIZE, grid_color=G
     painter.setPen(QPen(grid_color, 1))
     painter.drawLines(lines)
 
-def snap_to_grid(point, grid_size=20):
+def snap_to_grid(point, grid_size=GRID_SIZE):
     """
     Snaps a point to the nearest grid line based on the specified grid size.
     """

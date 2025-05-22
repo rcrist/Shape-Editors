@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from GUI.Grid import *
+from GUI.MenuBar import rotation_snap_angle
+from GUI.Grid import *
 
 class RightDock(QDockWidget):
     def __init__(self, parent=None):
@@ -64,14 +66,26 @@ class RightDock(QDockWidget):
     def update_width(self, value):
         if self.item:
             self.item.setWidth(value)
+            for view in self.item.scene().views():
+                view.viewport().update()
 
     def update_height(self, value):
         if self.item:
             self.item.setHeight(value)
+            for view in self.item.scene().views():
+                view.viewport().update()
 
     def update_rotation(self, value):
+        import GUI.Grid
         if self.item:
-            self.item.setRotationAngle(value)
+            print(f"IS_GRID_ENABLED: {GUI.Grid.IS_GRID_ENABLED:}")
+            if GUI.Grid.IS_GRID_ENABLED:
+                snapped_angle = round(value / rotation_snap_angle) * rotation_snap_angle
+            else:
+                snapped_angle = value
+            self.item.setRotation(snapped_angle)
+            for view in self.item.scene().views():
+                view.viewport().update()
 
     def change_fill_color(self):
         if self.item:
