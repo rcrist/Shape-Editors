@@ -72,6 +72,17 @@ class MenuBar(QMenuBar):
             }
         """)
 
+        # Set canvas (scene/view) background to black
+        import GUI.Grid
+        GUI.Grid.GRID_BG_COLOR = Qt.GlobalColor.black
+        main_window = self.parent()
+        if hasattr(main_window, "scene"):
+            main_window.scene.setBackgroundBrush(QBrush(Qt.GlobalColor.black))
+            main_window.scene.update()
+        if hasattr(main_window, "view"):
+            main_window.view.setBackgroundBrush(QBrush(Qt.GlobalColor.black))
+            main_window.view.viewport().update()
+
     def apply_light_theme(self):
         app = QApplication.instance()
         app.setPalette(QApplication.style().standardPalette())
@@ -84,6 +95,17 @@ class MenuBar(QMenuBar):
                 background: #d0d0d0;
             }
         """)
+
+        # Set canvas (scene/view) background to white
+        import GUI.Grid
+        GUI.Grid.GRID_BG_COLOR = Qt.GlobalColor.white
+        main_window = self.parent()
+        if hasattr(main_window, "scene"):
+            main_window.scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
+            main_window.scene.update()
+        if hasattr(main_window, "view"):
+            main_window.view.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
+            main_window.view.viewport().update()
 
     def toggle_grid(self):
         import GUI.Grid
@@ -157,35 +179,15 @@ class MenuBar(QMenuBar):
                 QMessageBox.warning(self, "Save", f"Failed to save file:\n{e}")
 
     def serialize_item(self, item):
-        # Rectangle
         if isinstance(item, Rectangle):
-            rect = item.rect()
-            color = item.brush().color()
-            pos = item.pos()
-            return {
-                "type": "rect",
-                "x": rect.x(),
-                "y": rect.y(),
-                "w": rect.width(),
-                "h": rect.height(),
-                "color": color.name(QColor.NameFormat.HexArgb),
-                "pos_x": pos.x(),
-                "pos_y": pos.y()
-            }
+            return item.to_dict()
         return None
 
     def deserialize_item(self, data):
         if not data:
             return None
-        pos_x = data.get("pos_x", 0)
-        pos_y = data.get("pos_y", 0)
-        if data.get("type") == "rect":
-            x, y, w, h = data["x"], data["y"], data["w"], data["h"]
-            color = QColor(data["color"])
-            item = Rectangle(x, y, w, h)
-            item.setBrush(QBrush(color))
-            item.setPos(pos_x, pos_y)
-            return item
+        if data.get("type", "rectangle") == "rectangle":
+            return Rectangle.from_dict(data)
         return None
     
     def print_diagram(self):

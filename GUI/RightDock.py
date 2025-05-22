@@ -78,7 +78,6 @@ class RightDock(QDockWidget):
     def update_rotation(self, value):
         import GUI.Grid
         if self.item:
-            print(f"IS_GRID_ENABLED: {GUI.Grid.IS_GRID_ENABLED:}")
             if GUI.Grid.IS_GRID_ENABLED:
                 snapped_angle = round(value / rotation_snap_angle) * rotation_snap_angle
             else:
