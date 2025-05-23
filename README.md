@@ -36,3 +36,28 @@ Same features as the Rectangle Editor
 Same features as the Rectangle Editor
 
 ![Screenshot](Images/TriangleEditor.png)
+
+## Line Editor
+
+Features:
+- Shape Appearance
+    - Move
+    - Rotate
+    - Line Color
+    - Line Width
+    - Line Style
+    - Line Cap
+
+![Screenshot](Images/LineEditor.png)
+
+## Text Editor
+
+Features:
+- Shape Appearance
+    - Move
+    - Rotate
+    - Text Color
+    - Font
+    - Font Size
+
+![Screenshot](Images/TextEditor.png)
