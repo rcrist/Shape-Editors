@@ -61,3 +61,14 @@ Features:
     - Font Size
 
 ![Screenshot](Images/TextEditor.png)
+
+## Image Editor
+
+Features:
+- Shape Appearance
+    - Move
+    - Rotate
+    - Scale
+    - Select Image
+
+![Screenshot](Images/ImageEditor.png)
