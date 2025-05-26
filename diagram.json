@@ -1,15 +1,16 @@
 [
   {
-    "type": "triangle",
-    "x": 50.0,
-    "y": 50.0,
-    "width": 120.0,
-    "height": 120.0,
-    "rotation": 60.0,
-    "fill_color": "#55ffff",
-    "border_color": "#ff5500",
-    "border_width": 7.0,
-    "pos_x": 130.0,
-    "pos_y": 40.0
+    "type": "line",
+    "x1": 50.0,
+    "y1": 50.0,
+    "x2": 100.0,
+    "y2": 100.0,
+    "rotation": 35.0,
+    "border_color": "#55ff7f",
+    "border_width": 5.0,
+    "line_style": 3,
+    "cap_style": 0,
+    "pos_x": 190.0,
+    "pos_y": 30.0
   }
 ]

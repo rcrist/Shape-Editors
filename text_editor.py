@@ -1,6 +1,9 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from GUI.MenuBar import *
+from GUI.Grid import *
+from Shapes.Text import Text
 import sys
 
 class GridScene(QGraphicsScene):
@@ -28,41 +31,6 @@ class GridScene(QGraphicsScene):
         grid = GridScene.GRID_SIZE
         return round(x / grid) * grid, round(y / grid) * grid
 
-class Text(QGraphicsTextItem):
-    def __init__(self, x, y):
-        super().__init__("Hello World!")
-        self.setTextInteractionFlags(Qt.TextInteractionFlag.TextEditorInteraction)
-        self.setDefaultTextColor(Qt.GlobalColor.blue)
-        font = QFont()
-        font.setPointSize(18)
-        self.setFont(font)
-        self.setPos(x, y)
-        # Use setFlag, not setFlags, for QGraphicsTextItem
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
-
-    def rect(self):
-        # Return a QRectF for compatibility
-        return QRectF(self.pos().x(), self.pos().y(), self.boundingRect().width(), self.boundingRect().height())
-
-    def setRect(self, rect):
-        # Move the text to the new position
-        self.setPos(rect.left(), rect.top())
-
-    def brush(self):
-        # For compatibility with color picker
-        return QBrush(self.defaultTextColor())
-
-    def setBrush(self, brush):
-        self.setDefaultTextColor(brush.color())
-
-    def pen(self):
-        # Not used, but for compatibility
-        return QPen(self.defaultTextColor())
-
-    def setPen(self, pen):
-        self.setDefaultTextColor(pen.color())
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -78,6 +46,11 @@ class MainWindow(QMainWindow):
         self.view.setScene(self.scene)
         self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setCentralWidget(self.view)
+
+        # Add MenuBar
+        menu_bar = MenuBar(self)
+        self.setMenuBar(menu_bar)
+        menu_bar.apply_dark_theme()
 
         # Draw the shape on the scene
         self.shape = Text(100, 100)

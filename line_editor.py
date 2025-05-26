@@ -1,109 +1,10 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from GUI.MenuBar import MenuBar
+from GUI.GridScene import *
+from Shapes.Line import Line
 import sys
-
-class GridScene(QGraphicsScene):
-    GRID_SIZE = 10
-
-    def drawBackground(self, painter, rect):
-        painter.save()
-        painter.setPen(QPen(QColor(60, 60, 60), 1))
-        left = int(rect.left()) - (int(rect.left()) % self.GRID_SIZE)
-        top = int(rect.top()) - (int(rect.top()) % self.GRID_SIZE)
-        right = int(rect.right())
-        bottom = int(rect.bottom())
-        x = left
-        while x <= right:
-            painter.drawLine(x, top, x, bottom)
-            x += self.GRID_SIZE
-        y = top
-        while y <= bottom:
-            painter.drawLine(left, y, right, y)
-            y += self.GRID_SIZE
-        painter.restore()
-
-    @staticmethod
-    def snap_to_grid(x, y):
-        grid = GridScene.GRID_SIZE
-        return round(x / grid) * grid, round(y / grid) * grid
-
-class Line(QGraphicsLineItem):
-    def __init__(self, x1, y1, x2, y2):
-        super().__init__(x1, y1, x2, y2)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
-        self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
-
-        self.line_color = Qt.GlobalColor.white
-        self.line_width = 3
-        self.line_style = Qt.PenStyle.SolidLine
-        self.cap_style = Qt.PenCapStyle.SquareCap
-
-        self.setPen(QPen(self.line_color, self.line_width, self.line_style, self.cap_style))
-
-        self._dragging_point = None  # None, 0 (p1), or 1 (p2)
-        self._drag_offset = QPointF(0, 0)
-
-    def paint(self, painter, option, widget=None):
-        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
-        painter.setPen(self.pen())
-        painter.drawLine(self.line())
-
-        # If selected, draw blue rectangles at endpoints
-        if self.isSelected():
-            rect_size = 10
-            half = rect_size / 2
-            line = self.line()
-            for pt in [line.p1(), line.p2()]:
-                rect = QRectF(pt.x() - half, pt.y() - half, rect_size, rect_size)
-                painter.setBrush(QBrush(Qt.GlobalColor.blue))
-                painter.setPen(Qt.GlobalColor.blue)
-                painter.drawRect(rect)
-
-    def mousePressEvent(self, event):
-        if self.isSelected():
-            rect_size = 10
-            half = rect_size / 2
-            line = self.line()
-            mouse_pos = event.pos()
-            for idx, pt in enumerate([line.p1(), line.p2()]):
-                rect = QRectF(pt.x() - half, pt.y() - half, rect_size, rect_size)
-                if rect.contains(mouse_pos):
-                    self._dragging_point = idx
-                    self._drag_offset = mouse_pos - pt
-                    event.accept()
-                    return
-        self._dragging_point = None
-        super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event):
-        if self._dragging_point is not None:
-            line = self.line()
-            new_pt = event.pos() - self._drag_offset
-            snapped_x, snapped_y = GridScene.snap_to_grid(new_pt.x(), new_pt.y())
-            if self._dragging_point == 0:
-                self.setLine(snapped_x, snapped_y, *GridScene.snap_to_grid(line.x2(), line.y2()))
-            else:
-                self.setLine(*GridScene.snap_to_grid(line.x1(), line.y1()), snapped_x, snapped_y)
-            event.accept()
-            self.update()
-            return
-        super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        self._dragging_point = None
-        super().mouseReleaseEvent(event)
-
-    def itemChange(self, change, value):
-        if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-            # Get the new position as x, y
-            x, y = value.x(), value.y()
-            snapped_x, snapped_y = GridScene.snap_to_grid(x, y)
-            return QPointF(snapped_x, snapped_y)
-        return super().itemChange(change, value)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -120,6 +21,11 @@ class MainWindow(QMainWindow):
         self.view.setScene(self.scene)
         self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setCentralWidget(self.view)
+
+        # Add MenuBar
+        menu_bar = MenuBar(self)
+        self.setMenuBar(menu_bar)
+        menu_bar.apply_dark_theme()
 
         # Draw the shape on the scene
         self.shape = Line(50, 50, 100, 100)

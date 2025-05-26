@@ -1,85 +1,10 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from GUI.MenuBar import MenuBar
+from GUI.GridScene import *
+from Shapes.Image import Image
 import sys
-
-class GridScene(QGraphicsScene):
-    GRID_SIZE = 10
-
-    def drawBackground(self, painter, rect):
-        painter.save()
-        painter.setPen(QPen(QColor(60, 60, 60), 1))
-        left = int(rect.left()) - (int(rect.left()) % self.GRID_SIZE)
-        top = int(rect.top()) - (int(rect.top()) % self.GRID_SIZE)
-        right = int(rect.right())
-        bottom = int(rect.bottom())
-        x = left
-        while x <= right:
-            painter.drawLine(x, top, x, bottom)
-            x += self.GRID_SIZE
-        y = top
-        while y <= bottom:
-            painter.drawLine(left, y, right, y)
-            y += self.GRID_SIZE
-        painter.restore()
-
-    @staticmethod
-    def snap_to_grid(x, y):
-        grid = GridScene.GRID_SIZE
-        return round(x / grid) * grid, round(y / grid) * grid
-
-class Image(QGraphicsPixmapItem):
-    def __init__(self, x, y, w, h, image_path=None):
-        super().__init__()
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges, True)
-        self.setPos(x, y)
-        default_path = "C:\\python_projects\\images\\earth.jpg"
-        if image_path:
-            self.image_path = image_path
-            self.set_image(image_path, w, h)
-        else:
-            self.image_path = default_path
-            self.set_image(default_path, w, h)
-
-    def set_image(self, image_path, w, h):
-        pixmap = QPixmap(image_path)
-        if not pixmap.isNull():
-            pixmap = pixmap.scaled(int(w), int(h), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-            self.setPixmap(pixmap)
-            self.image_path = image_path
-
-    def rect(self):
-        return QRectF(self.pos().x(), self.pos().y(), self.pixmap().width(), self.pixmap().height())
-
-    def setRect(self, rect):
-        # Rescale the image to the new rect size
-        if self.image_path:
-            self.set_image(self.image_path, int(rect.width()), int(rect.height()))
-        self.setPos(rect.left(), rect.top())
-
-    def brush(self):
-        # Not used, but for compatibility
-        return QBrush()
-
-    def setBrush(self, brush):
-        pass
-
-    def pen(self):
-        # Not used, but for compatibility
-        return QPen()
-
-    def setPen(self, pen):
-        pass
-
-    def itemChange(self, change, value):
-        if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-            # Snap the new position to the grid
-            x, y = value.x(), value.y()
-            snapped_x, snapped_y = GridScene.snap_to_grid(x, y)
-            return QPointF(snapped_x, snapped_y)
-        return super().itemChange(change, value)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -96,6 +21,11 @@ class MainWindow(QMainWindow):
         self.view.setScene(self.scene)
         self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setCentralWidget(self.view)
+
+        # Add MenuBar
+        menu_bar = MenuBar(self)
+        self.setMenuBar(menu_bar)
+        menu_bar.apply_dark_theme()
 
         # Draw the shape on the scene
         self.shape = Image(100, 100, 200, 200)
