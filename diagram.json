@@ -1,16 +1,13 @@
 [
   {
-    "type": "line",
-    "x1": 50.0,
-    "y1": 50.0,
-    "x2": 100.0,
-    "y2": 100.0,
-    "rotation": 35.0,
-    "border_color": "#55ff7f",
-    "border_width": 5.0,
-    "line_style": 3,
-    "cap_style": 0,
-    "pos_x": 190.0,
-    "pos_y": 30.0
+    "type": "image",
+    "x": 100.0,
+    "y": 100.0,
+    "width": 200.0,
+    "height": 112.0,
+    "rotation": 0.0,
+    "image_path": "C:\\python_projects\\images\\earth.jpg",
+    "pos_x": 100.0,
+    "pos_y": 100.0
   }
 ]

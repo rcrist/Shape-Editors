@@ -3,7 +3,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
 from GUI.GridScene import *
-from Shapes.Line import Line
+from Shapes.Image import Image
 import json
 
 is_dark_mode = True
@@ -179,15 +179,15 @@ class MenuBar(QMenuBar):
                 QMessageBox.warning(self, "Save", f"Failed to save file:\n{e}")
 
     def serialize_item(self, item):
-        if isinstance(item, Line):
+        if isinstance(item, Image):
             return item.to_dict()
         return None
 
     def deserialize_item(self, data):
         if not data:
             return None
-        if data.get("type", "line") == "line":
-            return Line.from_dict(data)
+        if data.get("type", "image") == "image":
+            return Image.from_dict(data)
         return None
     
     def print_diagram(self):

@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from GUI.GridScene import *
 
 class Text(QGraphicsTextItem):
     def __init__(self, x, y):
@@ -39,12 +40,10 @@ class Text(QGraphicsTextItem):
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-            # Force the view to update to prevent artifacts
-            scene = self.scene()
-            if scene is not None:
-                for view in scene.views():
-                    view.viewport().update()
-            return snap_to_grid(value, GRID_SIZE)
+            # Snap the new position to the grid
+            x, y = value.x(), value.y()
+            snapped_x, snapped_y = GridScene.snap_to_grid(x, y)
+            return GridScene.snap_to_grid(x, y)
         return super().itemChange(change, value)
     
     def to_dict(self):
