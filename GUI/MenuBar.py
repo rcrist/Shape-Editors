@@ -4,6 +4,11 @@ from PyQt6.QtGui import *
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
 from GUI.GridScene import *
 from Shapes.Image import Image
+from Shapes.Rectangle import Rectangle
+from Shapes.Ellipse import Ellipse
+from Shapes.Triangle import Triangle
+from Shapes.Text import Text
+from Shapes.Line import Line
 import json
 
 is_dark_mode = True
@@ -179,15 +184,36 @@ class MenuBar(QMenuBar):
                 QMessageBox.warning(self, "Save", f"Failed to save file:\n{e}")
 
     def serialize_item(self, item):
+        if isinstance(item, Rectangle):
+            return item.to_dict()
+        if isinstance(item, Ellipse):
+            return item.to_dict()
+        if isinstance(item, Triangle):
+            return item.to_dict()
+        if isinstance(item, Text):
+            return item.to_dict()
         if isinstance(item, Image):
+            return item.to_dict()
+        if isinstance(item, Line):
             return item.to_dict()
         return None
 
     def deserialize_item(self, data):
         if not data:
             return None
-        if data.get("type", "image") == "image":
+        t = data.get("type", "")
+        if t == "rectangle":
+            return Rectangle.from_dict(data)
+        if t == "ellipse":
+            return Ellipse.from_dict(data)
+        if t == "triangle":
+            return Triangle.from_dict(data)
+        if t == "text":
+            return Text.from_dict(data)
+        if t == "image":
             return Image.from_dict(data)
+        if t == "line":
+            return Line.from_dict(data)
         return None
     
     def print_diagram(self):
