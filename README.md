@@ -72,3 +72,9 @@ Features:
     - Select Image
 
 ![Screenshot](Images/ImageEditor.png)
+
+## Diagram Editor
+
+All features for all shaped combined into a single editor app
+
+![Screenshot](Images/DiagramEditor.png)
