@@ -24,17 +24,6 @@ class Text(QGraphicsTextItem):
         # Move the text to the new position
         self.setPos(rect.left(), rect.top())
 
-    def brush(self):
-        # For compatibility with color picker
-        return QBrush(self.defaultTextColor())
-
-    def setBrush(self, brush):
-        self.setDefaultTextColor(brush.color())
-
-    def pen(self):
-        # Not used, but for compatibility
-        return QPen(self.defaultTextColor())
-
     def setPen(self, pen):
         self.setDefaultTextColor(pen.color())
 

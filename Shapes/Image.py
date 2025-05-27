@@ -34,20 +34,6 @@ class Image(QGraphicsPixmapItem):
             self.set_image(self.image_path, int(rect.width()), int(rect.height()))
         self.setPos(rect.left(), rect.top())
 
-    def brush(self):
-        # Not used, but for compatibility
-        return QBrush()
-
-    def setBrush(self, brush):
-        pass
-
-    def pen(self):
-        # Not used, but for compatibility
-        return QPen()
-
-    def setPen(self, pen):
-        pass
-
     def itemChange(self, change, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             # Snap the new position to the grid
