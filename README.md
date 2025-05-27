@@ -75,6 +75,6 @@ Features:
 
 ## Diagram Editor
 
-All features for all shaped combined into a single editor app
+All features for all shapes combined into a single editor app
 
 ![Screenshot](Images/DiagramEditor.png)
